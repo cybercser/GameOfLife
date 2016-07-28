@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>John Conway's Game of Life</title>
+<link rel="stylesheet" href="style.css">
+<script src="gameoflife.js"></script>
+<script src="framework.js"></script>
+<script>
+    var game = new GameOfLife();
+
+    function init() {
+        isContinue = false;
+        interval = 100;
+        game.init();
+        canvas = document.getElementById("gameCanvas");
+        ctx = canvas.getContext("2d");
+        game.render(ctx);
+    }
+
+    function setup(index) {
+        switch(index) {
+        case 0: game.clear(); break;
+        case 1: game.loadGlider(); break;
+        case 2: game.loadSmallExploder(); break;
+        case 3: game.loadExploder(); break;
+        case 4: game.loadTenCellRow(); break;
+        case 5: game.loadLightweightSpaceship(); break;
+        case 6: game.loadTumbler(); break;
+        case 7: game.loadGosperGliderGun(); break;
+        }
+        game.render(ctx);
+        document.getElementById("generation").innerHTML = game.generation;
+        document.getElementById("population").innerHTML = game.population;
+    }
+
+    function setSpeed(value) {
+        interval = 1000/value;
+    }
+
+    function step() {
+        game.simulate();
+        game.render(ctx);
+        document.getElementById("generation").innerHTML = game.generation;
+        document.getElementById("population").innerHTML = game.population;
+    }
+
+    function execute() {
+        if (isContinue) {
+            stop();
+            document.getElementById("execute").innerHTML = "Start";
+            document.getElementById("step").disabled = false;
+        } else {
+            start("gameCanvas", step);
+            document.getElementById("execute").innerHTML = "Stop";
+            document.getElementById("step").disabled = true;
+        }
+    }
+</script>
+</head>
+<body onload="init();">
+<h1 style="text-align: center;">Game of Life</h1>
+<p style="text-align: center;">This is a HTML5 demo of<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life"> John Conway's Game of Life</a>.</p>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div style="width:800px; margin:0 auto;">
+	<select id="initialSetup" onchange="setup(this.selectedIndex)">
+        <option value="clear">Clear</option>
+        <option value="glider">Glider</option>
+        <option value="smallexplorer">Small Exploder</option>
+        <option value="exploder">Exploder</option>
+        <option value="tencellrow">10 Cell Row</option>
+        <option value="lightweightspaceship">Lightweight Spaceship</option>
+        <option value="tumbler">Tumbler</option>
+        <option value="gospergildergun">Gosper Glider Gun</option>
+    </select>
+    <button onClick="step();" id="step">Next</button>
+    <button onClick="execute();" id="execute">Start</button>
+    Speed:
+    <input type="range" name="speed" min="1" max="100" step="5" value="10" onchange="setSpeed(this.value)">
+    Population:
+    <label id="population">0</label>
+    Generation:
+    <label id="generation">0</label>
+</div>
+</body>
+</html>
